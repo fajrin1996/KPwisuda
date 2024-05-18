@@ -19,6 +19,7 @@ class Prodi(db.Model):
     namaMHS = db.relationship('namaMahasiswa', backref='nama', lazy=True)
 
 class Panitia(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
     nama = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), nullable=False)
     password = db.Column(db.String(20), nullable=False)
@@ -37,6 +38,7 @@ class namaMahasiswa(db.Model):
         return f"User('{self.username}', '{self.email}', '{self.image_file}')"
 
 class syaratWis(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
     bebas_ak = db.Column(db.String(50), nullable=False)
     ijazah = db.Column(db.String(50), nullable=False)
     pasfoto = db.Column(db.String(50), nullable=False)
