@@ -1,6 +1,7 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, make_response, session, request
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+import pdfkit
 
 app = Flask(__name__)
 
@@ -48,6 +49,7 @@ class syaratWis(db.Model):
     bebaspp = db.Column(db.String(50), nullable=False)
     bbspus = db.Column(db.String(50), nullable=False)
     sfkpp = db.Column(db.String(50), nullable=False)
+    verify = db.Column(db.Boolean, default=False)
     mahasiswaId = db.Column(db.Integer, db.ForeignKey('namamahasiswa.id'), nullable=False)
 
 # class Post(db.Model):
@@ -65,5 +67,23 @@ class syaratWis(db.Model):
 def home():
     return render_template('index.html')
 
+@app.route('/download-form-wisuda')
+def download():
+    rendered = render_template('form-wsisuda.html')
+    stile = ['static/bootstrap.min.css']
+    pdf = pdfkit.from_string(rendered, False, options={'enable-local-file-access':''}, css=stile)
+
+    response= make_response(pdf)
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['content-Disposition'] = 'inline; filename=formulir.pdf'
+
+    return response
+
+@app.route('/login-panitia', methods=['GET', 'POST'])
+def login_pnt():
+    # login = request.form['email']
+    # if request.method == 'POST':
+        # pass
+    return render_template('login-panitia.html')
 if __name__ == '__main__':
     app.run(debug=True)
