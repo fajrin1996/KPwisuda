@@ -1,0 +1,43 @@
+{% extends 'base.html'%}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-3"></div>
+    <div class="shadow-lg p-3 mb-5 bg-white rounded col-md-6">
+        <form action="" method="post">
+            <div class="form-group">
+                <label for="exampleInputEmail1">username</label>
+                <input name="username" class="form-control" id="username" aria-describedby="emailHelp">
+            </div>
+        <div class="form-group">
+          <label for="exampleInputEmail1">Email address</label>
+          <input type="email" name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+          <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+        </div>
+
+        <div class="form-group">
+            <label for="exampleInputEmail1">NPM</label>
+            <input name="npm" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+        </div>
+
+        <label for="exampleInputPassword1">Pilih prodi</label>
+        <select class="form-select-lg mb-3 form-control" aria-label="Default select example">
+            <option selected>Pilih prodi</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+          </select>
+
+        <div class="form-group">
+            <label for="exampleInputPassword1">Password</label>
+            <input type="password" name="password" class="form-control" id="exampleInputPassword1">
+        </div>
+
+        
+        <button type="submit" class="btn btn-primary">Submit</button>
+
+        </form>
+    </div>
+    <div class="col-md-3"></div>
+</div>
+{%endblock%}

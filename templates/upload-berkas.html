@@ -1,0 +1,49 @@
+{% extends 'base.html'%}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <h2 class="text-center  p-2">upload berkas</h2>
+            <form action="" method="POST" enctype="multipart/form-data">
+                
+                <div class="form-group">
+                    <input type="file" name="bebas_ak" id="bebas_ak" class="form-control">
+                   
+                </div>
+                <div class="form-group">
+                    <input type="file" name="ijazah" id="ijazah" class="form-control">
+                     
+                </div>
+                <div class="form-group">
+                    <input type="file" name="pasfoto" id="pasfoto" class="form-control">
+                    
+                </div>
+                <div class="form-group">
+                    <input type="file" name="karker" id="karker" class="form-control">
+                    
+                </div>
+                <div class="form-group">
+                    <input type="file" name="ktp" id="ktp" class="form-control">
+                </div>
+                <div class="form-group">
+                    <input type="file" name="transnli" id="transnli" class="form-control">
+                </div>
+                <div class="form-group">
+                    <input type="file" name="bebaspp" id="bebaspp" class="form-control">
+                </div>
+                <div class="form-group">
+                    <input type="file" name="bbspus" id="bbspus" class="form-control">
+                    
+                </div>
+                <div class="form-group">
+                    <input type="file" name="sfkpp" id="sfkpp" class="form-control"> 
+                </div>
+                <input type="submit" value="simpan berkas" class="btn btn-outline-info mt-2">
+            </form>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+</div>
+{% endblock %}

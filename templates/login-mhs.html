@@ -3,14 +3,15 @@
 {% block content %}
     <div class="login-container">
         <h2>Login</h2>
-        <form action="/login-panitia" method="post">
-            <label for="username">Email</label>
-            <input type="text" id="email" name="email" required>
+        <form  method="post">
+            <label for="npm">NPM</label>
+            <input type="text" id="npm" name="npm" required>
             
             <label for="password">Password</label>
             <input type="password" id="password" name="password" required>
             
             <button type="submit">Login</button>
+            <small>belum punya akun silahkan daftar  <a href="/registrasi-biodata">disini</a></small>
         </form>
     </div>
 {% endblock %}
