@@ -4,7 +4,6 @@ from flask_login import  current_user, LoginManager, logout_user, login_required
 from flask_bcrypt import Bcrypt
 from datetime import datetime
 # from form import Wisudaform
-import pdfkit
 import os
 # from werkzeug
 
