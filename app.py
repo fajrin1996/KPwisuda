@@ -3,9 +3,10 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import  current_user, LoginManager, logout_user, login_required, UserMixin, login_user
 from flask_bcrypt import Bcrypt
 from datetime import datetime
+# from form import Wisudaform
 import pdfkit
-
-
+import os
+# from werkzeug
 
 dbuser = 'root'
 dbpass ='myPassword' 
@@ -18,6 +19,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'jkwxv4y'
 app.config['SQLALCHEMY_DATABASE_URI'] = conn
 app.config["CLIENT_PDF"] = "/home/fajrin/webdev/projekKP/static/formulir/"
+app.config['UPLOAD_PDF'] = "static/pdf"
 
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
@@ -27,7 +29,18 @@ login_manager = LoginManager(app)
 @login_manager.user_loader
 def load_user(user_id):
   return Registrasi.query.get(int(user_id))
-  
+
+pdfpath = 'pdf/'
+def makedir(nama):
+    if os.path.exists(pdfpath+nama):
+        print('the folder is exist')
+        return pdfpath+nama
+    else:
+        os.makedirs(pdfpath+nama)
+    return pdfpath+nama
+# 
+def auto_fol(nama):
+    return nama
 
 class Fakultas(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -72,17 +85,21 @@ class Wisuda(db.Model):
     sfkpp = db.Column(db.String(50), nullable=False)
     verify = db.Column(db.Boolean, default=False)
     mahasiswaId = db.Column(db.Integer, db.ForeignKey('registrasi.id'), nullable=False)
-# 
+
+    def __repr__(self):
+        return f"Wisuda('{self.bebas_ak}', '{self.ijazah}', '{self.pasfoto}', '{self.karker}', '{self.ktp}', \
+            '{self.transnli}', '{self.bebaspp}', '{self.bbspus}', '{self.sfkpp}', '{self.mahasiswaId}')"
+
 class Notifikasi(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now)
     content = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('registrasi.id'), nullable=False)
 
     def __repr__(self):
-        return f"Post('{self.title}', '{self.date_posted}')"
+        return f"Notifikasi('{self.date_posted}', '{self.content}','{self.user_id})"
 
-# 
+ 
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -123,9 +140,62 @@ def logout_panitia():
     session.pop('email')
     return redirect(url_for('login_pnt'))
 
-@app.route('/upload-berkas')
+@app.route('/page-panitia')
+def page_panitia():
+    return render_template('page_panitia.html')
+
+
+# @app.route('/upload-berkas-2')
+# @login_required
+# def upload_brks():
+    # form=Wisudaform()
+    # if form.validate_on_submit():
+        # syarat = Wisuda( bebas_ak=form.bebas.data, ijazah=ijazahsmu,\
+            #    pasfoto=foto, karker=kartu, \
+            #   ktp=ktpen, 
+            #    transnli=transkrip, bebaspp=bebaspp,\
+                # bbspus=perpus, sfkpp=ppkk, mahasiswaId=current_user.id)
+    # return render_template('upload-brks.html', form=form)
+# 
+
+#makedir(current_user.npm),
+@app.route('/upload-berkas', methods=['GET', 'POST'])
 @login_required
 def upload_berkas():
+    if request.method == "POST":
+        bebas_ak = request.files['akademik']
+        ijazah = request.files['ijazah']
+        pasfoto = request.files['pasfoto']
+        karker = request.files['karker']
+        ktp = request.files['ktp']
+        transnli =  request.files['transnli']
+        bebaspp = request.files['bebaspp']
+        bbspus = request.files['bbspus']
+        sfkpp = request.files['sfkpp']
+    
+        bebas_ak.save(os.path.join(app.config['UPLOAD_PDF'],bebas_ak.filename))
+        ijazah.save( os.path.join(app.config['UPLOAD_PDF'],  ijazah.filename))
+        bbspus.save(os.path.join(app.config['UPLOAD_PDF'], bbspus.filename) )
+        bebaspp.save(os.path.join(app.config['UPLOAD_PDF'],  bebaspp.filename))
+        karker.save(os.path.join(app.config['UPLOAD_PDF'],  karker.filename))
+        pasfoto.save(os.path.join(app.config['UPLOAD_PDF'],  pasfoto.filename))
+        ktp.save(os.path.join(app.config['UPLOAD_PDF'],  ktp.filename))
+        transnli.save(os.path.join(app.config['UPLOAD_PDF'],  transnli.filename))
+        sfkpp.save(os.path.join(app.config['UPLOAD_PDF'], sfkpp.filename))
+
+        
+        syarat = Wisuda( bebas_ak=bebas_ak.filename, ijazah=ijazah.filename,\
+                         pasfoto=pasfoto.filename, karker=karker.filename, \
+                        ktp=ktp.filename, 
+                         transnli=transnli.filename, bebaspp=bebaspp.filename,\
+                          bbspus=bbspus.filename, sfkpp=sfkpp.filename, mahasiswaId=current_user.id)
+ 
+        db.session.add(syarat)
+        db.session.commit()
+
+
+        print('berhasil disimpan')
+        return redirect(url_for('page_mhs'))
     return render_template('upload-berkas.html')
 
 @app.route('/login-mahasiswa', methods=['GET', 'POST'])
@@ -135,10 +205,18 @@ def login_mhs():
         if user and bcrypt.check_password_hash(user.password, request.form.get('password')):
           login_user(user)
           next_page = request.args.get('next')
-          return redirect(next_page) if next_page else redirect(url_for("upload_berkas"))
+          return redirect(next_page) if next_page else redirect(url_for("page_mhs"))
         else:
             print("login gagal harap periksa password dan npm","danger")
   return render_template('login-mhs.html')
+
+@app.route('/page-mahasiswa')
+@login_required
+def page_mhs():
+    wsd = Wisuda.query.filter_by(mahasiswaId=current_user.id).first()
+    return render_template('page-mahasiswa.html', wsd=wsd)
+
+@app.route('/')
 
 @app.route('/logout-mhs')
 def logout_mhs():

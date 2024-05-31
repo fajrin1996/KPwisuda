@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="contai mt-4">
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
+
+            <table class="table table-striped table-dark">
+                <thead>
+                  <tr>
+                    <th scope="col">NO</th>
+                    <th scope="col">Bebas akademik</th>
+                    <th scope="col">Ijazah</th>
+                    <th scope="col">pasfoto</th>
+                    <th scope="col">kartu-kel</th>
+                    <th scope="col">kTP</th>
+                    <th scope="col">transkrip nilai</th>
+                    <th scope="col">bebas spp</th>
+                    <th scope="col">bebas perpus</th>
+                    <th scope="col">sertifikat p2kk</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">1</th>
+                    <td>{{wsd.bebas_ak}}</td>
+                    <td>{{wsd.ijazah}}</td>
+                    <td><img src="/static/pdf/{{wsd.pasfoto}}" alt="{{wsd.pasfoto}}" srcset="" height="50" width="40"></td>
+                    <td>{{wsd.karker}}</td>
+                    <td>{{wsd.ktp}}</td>
+                    <td>{{wsd.transnli}}</td>
+                    <td>{{wsd.bebaspp}}</td>
+                    <td>{{wsd.bbspus}}</td>
+                    <td>{{wsd.sfkpp}}</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <a href="/upload-berkas" class="btn btn-success"> upload berkas</a>
+        </div>
+        <div class="col-md-1"></div>
+    </div>
+</div>
+{% endblock %}

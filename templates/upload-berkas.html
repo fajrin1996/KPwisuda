@@ -6,39 +6,48 @@
         <div class="col-md-2"></div>
         <div class="col-md-8">
             <h2 class="text-center  p-2">upload berkas</h2>
-            <form action="" method="POST" enctype="multipart/form-data">
+            <form action="/upload-berkas" method="post" enctype="multipart/form-data">
                 
                 <div class="form-group">
-                    <input type="file" name="bebas_ak" id="bebas_ak" class="form-control">
+                    <label for="">unggah bebas akademik</label>
+                    <input type="file" name="akademik"  class="form-control" >
                    
                 </div>
                 <div class="form-group">
-                    <input type="file" name="ijazah" id="ijazah" class="form-control">
+                    <label for=""> unggah ijazah smu</label>
+                    <input type="file" name="ijazah"  class="form-control">
                      
                 </div>
                 <div class="form-group">
-                    <input type="file" name="pasfoto" id="pasfoto" class="form-control">
+                    <label >unggah pasfoto</label>
+                    <input type="file" name="pasfoto" class="form-control" >
                     
                 </div>
                 <div class="form-group">
-                    <input type="file" name="karker" id="karker" class="form-control">
+                    <label for="">unggah fotokopi kartu keluarga</label>
+                    <input type="file" name="karker" class="form-control">
+                    
+                </div>
+                <div class="form-group"> 
+                    <label for="exampleInputEmail1">unggah fotokopi ktp</label>
+                    <input type="file" name="ktp" class="form-control" >
+                </div>
+                <div class="form-group">
+                    <label for="">unggah transkrip nilai</label>
+                    <input type="file" name="transnli" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="">unggah bebas spp</label>
+                    <input type="file" name="bebaspp"  class="form-control" >
+                </div>
+                <div class="form-group">
+                    <label for="">unggah bebas perpustakaan</label>
+                    <input type="file" name="bbspus" class="form-control" >
                     
                 </div>
                 <div class="form-group">
-                    <input type="file" name="ktp" id="ktp" class="form-control">
-                </div>
-                <div class="form-group">
-                    <input type="file" name="transnli" id="transnli" class="form-control">
-                </div>
-                <div class="form-group">
-                    <input type="file" name="bebaspp" id="bebaspp" class="form-control">
-                </div>
-                <div class="form-group">
-                    <input type="file" name="bbspus" id="bbspus" class="form-control">
-                    
-                </div>
-                <div class="form-group">
-                    <input type="file" name="sfkpp" id="sfkpp" class="form-control"> 
+                    <label for=""> unggah sertifikat P2KK</label>
+                    <input type="file" name="sfkpp" class="form-control"> 
                 </div>
                 <input type="submit" value="simpan berkas" class="btn btn-outline-info mt-2">
             </form>

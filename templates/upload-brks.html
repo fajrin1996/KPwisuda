@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form action="" method="post" enctype="multipart/form-data">
+{{form.bebas.label}}
+{{form.bebas(class='form-control')}}
+
+{{form.ijazah.label}}
+{{form.ijazah(class='form-control')}}
+
+{{form.karke.label}}
+{{form.karke(class='form-control')}}
+
+{{form.pasfoto.label}}
+{{form.pasfoto(class='form-control')}}
+
+{{form.ktp.label}}
+{{form.ktp(class='form-control')}}
+
+{{form.transkrip.label}}
+{{form.transkrip(class='form-control')}}
+
+{{form.spp.label}}
+{{form.spp(class='form-control')}}
+
+{{form.ppkk.label}}
+{{form.ppkk(class='form-control')}}
+
+{{form.submit(class="btn btn-outline-info mt-2")}}
+
+</form>
+
+{% endblock %}
