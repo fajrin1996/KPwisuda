@@ -1,0 +1,35 @@
+{% extends 'base.html'%}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col">NO</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">nama</th>
+                    <th scope="col">NPM</th>
+                    <th scope="col">Prodi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    {% for vld in valid %}
+                    <th scope="row">{{loop.index}} </th>
+                    <td>{{vld[0]}}</td>
+                    <td><a href="/laman-periksa-dokumen/{{vld[4]}}">{{vld[1]}}</a></td>
+                    <td>{{vld[2]}}</td>
+                    <td>{{vld[3]}}</td>
+                    {% endfor %}
+                  </tr>
+                </tbody>
+              </table>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+</div>
+
+{% endblock%}

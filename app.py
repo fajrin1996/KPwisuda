@@ -8,7 +8,7 @@ import os
 # from werkzeug
 
 dbuser = 'root'
-dbpass ='dh1yaL_D' 
+dbpass ='myPassword' 
 dbhost = 'localhost'
 dbname = 'kpprojek'
 conn = 'mysql+pymysql://{0}:{1}@{2}/{3}'.format(dbuser, dbpass, dbhost, dbname)
@@ -18,6 +18,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'jkwxv4y'
 app.config['SQLALCHEMY_DATABASE_URI'] = conn
 app.config["CLIENT_PDF"] = "/home/fajrin/webdev/projekKP/static/formulir/"
+app.config["DOWNLOAD_PDF"] = 'static/pdf'
 app.config['UPLOAD_PDF'] = "static/pdf"
 
 db = SQLAlchemy(app)
@@ -65,7 +66,7 @@ class Registrasi(db.Model, UserMixin):
     npm = db.Column(db.String(40), nullable=False, unique=True ,default='default.jpg')
     password = db.Column(db.String(60), nullable=False)
     notif = db.relationship('Notifikasi', backref='author', lazy=True)
-    syarat = db.relationship('Wisuda', backref='wisuda', lazy=True)
+    syarat = db.relationship('Wisuda', backref='wsd', lazy=True)
     prodId = db.Column(db.Integer, db.ForeignKey('prodi.id'), nullable=False)
     
     def __repr__(self):
@@ -144,19 +145,6 @@ def page_panitia():
     return render_template('page_panitia.html')
 
 
-# @app.route('/upload-berkas-2')
-# @login_required
-# def upload_brks():
-    # form=Wisudaform()
-    # if form.validate_on_submit():
-        # syarat = Wisuda( bebas_ak=form.bebas.data, ijazah=ijazahsmu,\
-            #    pasfoto=foto, karker=kartu, \
-            #   ktp=ktpen, 
-            #    transnli=transkrip, bebaspp=bebaspp,\
-                # bbspus=perpus, sfkpp=ppkk, mahasiswaId=current_user.id)
-    # return render_template('upload-brks.html', form=form)
-# 
-
 #makedir(current_user.npm),
 @app.route('/upload-berkas', methods=['GET', 'POST'])
 @login_required
@@ -215,7 +203,31 @@ def page_mhs():
     wsd = Wisuda.query.filter_by(mahasiswaId=current_user.id).first()
     return render_template('page-mahasiswa.html', wsd=wsd)
 
-@app.route('/')
+@app.route('/laman-validasi-mahasiswa')
+def daftar_mhs():
+    valid = db.session.query(Registrasi.email, Registrasi.username, Registrasi.npm, Prodi.namaFak, Wisuda.mahasiswaId).join(Wisuda, Registrasi.id == Wisuda.mahasiswaId)\
+        .join(Prodi, Registrasi.prodId == Prodi.id).filter(Wisuda.verify == 0).all()
+    return render_template('daftar-val-mahasiswa.html', valid=valid)
+
+@app.route('/laman-periksa-dokumen/<int:ids>') 
+def periksa_dok(ids):
+    #  nama = db.session.query(Wisuda.bebas_ak, Wisuda.ijazah, Wisuda.karker, Wisuda.ktp, Wisuda.bbspus, \
+                            #  Wisuda.sfkpp, Wisuda.bebaspp, Wisuda.transnli, Wisuda.pasfoto, Registrasi.username)\
+                                # .join(Registrasi, Wisuda.mahasiswaId == Registrasi.id).filter(Wisuda.mahasiswaId == ids).first()
+    #  print('debug ', nama)
+     nama = Wisuda.query.filter(Wisuda.mahasiswaId==ids).first()
+     return render_template('periksa-dok.html', nama=nama)
+    
+@app.route('/lolos-verifikasi/<int:ids>')
+def lolos_ver(ids):
+    wsda = Wisuda.query.filter(Wisuda.mahasiswaId==ids).first()
+    wsda.verify = 1
+    db.session.commit()
+    return redirect(url_for('daftar_mhs'))
+
+@app.route('/download-berkas-wisuda/<filename>')
+def download_wsd(filename):
+    return send_from_directory(app.config["DOWNLOAD_PDF"], path=filename, as_attachment=True)
 
 @app.route('/logout-mhs')
 def logout_mhs():
