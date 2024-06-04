@@ -1,4 +1,5 @@
-from flask import Flask, render_template, make_response, session, request, redirect, url_for, abort, send_from_directory
+from flask import Flask, render_template, make_response, session, request, redirect, url_for, \
+      abort, send_from_directory, send_file
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import  current_user, LoginManager, logout_user, login_required, UserMixin, login_user
 from flask_bcrypt import Bcrypt
@@ -17,7 +18,7 @@ app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'jkwxv4y'
 app.config['SQLALCHEMY_DATABASE_URI'] = conn
-app.config["CLIENT_PDF"] = "/home/fajrin/webdev/projekKP/static/formulir/"
+app.config["CLIENT_PDF"] = "static/formulir/form-wisuda.pdf"
 app.config["DOWNLOAD_PDF"] = 'static/pdf'
 app.config['UPLOAD_PDF'] = "static/pdf"
 
@@ -104,23 +105,23 @@ class Notifikasi(db.Model):
 def home():
     return render_template('index.html')
 
-# @app.route('/download-form-wisuda')
-# def download():
-    # try:
-        # return send_from_directory('/home/fajrin/webdev/projekKP/static/formulir/', filename='form-wisuda.pdf', as_attachment=True)
-    # except FileNotFoundError:
-    #   abort((404))
+@app.route('/download-form-wisuda')
+def download():
+    try:
+        return send_file(app.config["CLIENT_PDF"], as_attachment=True)
+    except FileNotFoundError:
+      abort((404))
 
 @app.route('/registrasi-biodata',  methods=['GET', 'POST'])
 def reg_bio():
-
+    prodi = Prodi.query.all()
     if request.method == "POST":
         hash_pass = bcrypt.generate_password_hash(request.form['password']).decode('UTF-8')
         reg = Registrasi(username = request.form['username'], email = request.form['email'] ,npm = request.form['npm'], prodId=1 , password=hash_pass)
         db.session.add(reg)
         db.session.commit()
         return redirect(url_for('login_mhs'))
-    return render_template('reg-biodata.html')
+    return render_template('reg-biodata.html', prodi=prodi)
 
 app.route('/test')
 def test(nama):
@@ -205,29 +206,38 @@ def page_mhs():
 
 @app.route('/laman-validasi-mahasiswa')
 def daftar_mhs():
-    valid = db.session.query(Registrasi.email, Registrasi.username, Registrasi.npm, Prodi.namaFak, Wisuda.mahasiswaId).join(Wisuda, Registrasi.id == Wisuda.mahasiswaId)\
-        .join(Prodi, Registrasi.prodId == Prodi.id).filter(Wisuda.verify == 0).all()
-    return render_template('daftar-val-mahasiswa.html', valid=valid)
+    if session.get('email'):
+        valid = db.session.query(Registrasi.email, Registrasi.username, Registrasi.npm, Prodi.namaFak, Wisuda.mahasiswaId).join(Wisuda, Registrasi.id == Wisuda.mahasiswaId)\
+            .join(Prodi, Registrasi.prodId == Prodi.id).filter(Wisuda.verify == 0).all()
+        return render_template('daftar-val-mahasiswa.html', valid=valid)
+    else:
+        return redirect(url_for('login_pnt'))
 
 @app.route('/laman-periksa-dokumen/<int:ids>') 
 def periksa_dok(ids):
-    #  nama = db.session.query(Wisuda.bebas_ak, Wisuda.ijazah, Wisuda.karker, Wisuda.ktp, Wisuda.bbspus, \
-                            #  Wisuda.sfkpp, Wisuda.bebaspp, Wisuda.transnli, Wisuda.pasfoto, Registrasi.username)\
-                                # .join(Registrasi, Wisuda.mahasiswaId == Registrasi.id).filter(Wisuda.mahasiswaId == ids).first()
-    #  print('debug ', nama)
-     nama = Wisuda.query.filter(Wisuda.mahasiswaId==ids).first()
-     return render_template('periksa-dok.html', nama=nama)
+     if session.get('email'):
+        nama = Wisuda.query.filter(Wisuda.mahasiswaId==ids).first()
+        return render_template('periksa-dok.html', nama=nama)
+     else:
+        return redirect(url_for('login_pnt'))
     
 @app.route('/lolos-verifikasi/<int:ids>')
 def lolos_ver(ids):
-    wsda = Wisuda.query.filter(Wisuda.mahasiswaId==ids).first()
-    wsda.verify = 1
-    db.session.commit()
-    return redirect(url_for('daftar_mhs'))
-
+    if session.get('email'):
+        wsda = Wisuda.query.filter(Wisuda.mahasiswaId==ids).first()
+        wsda.verify = 1
+        db.session.commit()
+        return redirect(url_for('daftar_mhs'))
+    else:
+        return redirect(url_for('login_pnt'))
+    
 @app.route('/download-berkas-wisuda/<filename>')
 def download_wsd(filename):
-    return send_from_directory(app.config["DOWNLOAD_PDF"], path=filename, as_attachment=True)
+    try:
+        return send_from_directory(app.config["DOWNLOAD_PDF"], path=filename, as_attachment=True)
+
+    except FileNotFoundError:
+            abort((404))
 
 @app.route('/logout-mhs')
 def logout_mhs():
