@@ -9,7 +9,7 @@ import os
 # from werkzeug
 
 dbuser = 'root'
-dbpass ='myPassword' 
+dbpass ='dh1yaL_D' 
 dbhost = 'localhost'
 dbname = 'kpprojek'
 conn = 'mysql+pymysql://{0}:{1}@{2}/{3}'.format(dbuser, dbpass, dbhost, dbname)
