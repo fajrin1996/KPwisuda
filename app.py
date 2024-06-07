@@ -133,7 +133,7 @@ def login_pnt():
         pnt = Panitia.query.filter_by(email=request.form.get('email')).first()
         if pnt and bcrypt.check_password_hash(pnt.password, request.form.get('password')):
             session['email'] = request.form.get('email')
-            return redirect(url_for('page_panitia'))
+            return redirect(url_for('daftar_mhs'))
     return render_template('login-panitia.html')
 
 @app.route('/logout-panitia')
@@ -202,7 +202,10 @@ def login_mhs():
 @login_required
 def page_mhs():
     wsd = Wisuda.query.filter_by(mahasiswaId=current_user.id).first()
-    return render_template('page-mahasiswa.html', wsd=wsd)
+    if wsd:
+        return render_template('page-mahasiswa.html', wsd=wsd)
+    else:
+        return render_template('tabel-kosong.html')
 
 @app.route('/laman-validasi-mahasiswa')
 def daftar_mhs():
@@ -245,4 +248,4 @@ def logout_mhs():
     return redirect(url_for('login_mhs'))
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True)
